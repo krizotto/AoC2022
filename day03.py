@@ -1,6 +1,3 @@
-from string import ascii_lowercase, ascii_uppercase
-
-
 def find_common_part_1(a: str, b: str) -> int:
     a_set = set(list(a))
     b_set = set(list(b))
