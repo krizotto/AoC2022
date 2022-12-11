@@ -22,7 +22,10 @@ class Monkey:
 
     def inspect_item(self, old):
         self.inspected_items += 1
-        new = math.floor(eval(self.function) / 3)
+        if divide_by == 1:
+            new = eval(self.function)
+        else:
+            new = math.floor(eval(self.function) / divide_by)
         if new % self.test == 0:
             self.items_to_throw.append((self.if_true, new))
         else:
@@ -41,32 +44,48 @@ class Monkey:
 
 
 max_rounds = 20
+divide_by = 3
 monkeys = [
-    Monkey([79, 98], "old*19", 23, 2, 3),
-    Monkey([54, 65, 75, 74], "old+6", 19, 2, 0),
-    Monkey([79, 60, 97], "old*old", 13, 1, 3),
-    Monkey([74], "old+3", 17, 0, 1),
+    Monkey([57], "old*13", 11, 3, 2),
+    Monkey([58, 93, 88, 81, 72, 73, 65], "old+2", 7, 6, 7),
+    Monkey([65, 95], "old+6", 13, 3, 5),
+    Monkey([58, 80, 81, 83], "old*old", 5, 4, 5),
+    Monkey([58, 89, 90, 96, 55], "old+3", 3, 1, 7),
+    Monkey([66, 73, 87, 58, 62, 67], "old*7", 17, 4, 1),
+    Monkey([85, 55, 89], "old+4", 2, 2, 0),
+    Monkey([73, 80, 54, 94, 90, 52, 69, 58], "old+7", 19, 6, 0),
 ]
+monkeys_p2 = deepcopy(monkeys)
 
-items_to_throw = []
 
-for _ in range(max_rounds):
-    for i in range(len(monkeys)):
-        for item in [item for item in items_to_throw if item[0] is i]:
-            monkeys[item[0]].catch_item(item[1])
-        items_to_throw = [item for item in items_to_throw if item[0] is not i]
-        processed = monkeys[i].process_round()
-        if len(processed) > 0:
-            items_to_throw.extend(processed)
-    for item in items_to_throw:
-        monkeys[item[0]].catch_item(item[1])
+def solution(max_rounds, monkeys):
     items_to_throw = []
+    for _ in range(max_rounds):
+        for i in range(len(monkeys)):
+            for item in [item for item in items_to_throw if item[0] is i]:
+                monkeys[item[0]].catch_item(item[1])
+            items_to_throw = [item for item in items_to_throw if item[0] is not i]
+            processed = monkeys[i].process_round()
+            if len(processed) > 0:
+                items_to_throw.extend(processed)
+        for item in items_to_throw:
+            monkeys[item[0]].catch_item(item[1])
+        items_to_throw = []
 
-for i in range(len(monkeys)):
-    print("Monkey", i, "inspected items", monkeys[i].get_inspected_items(), "times.")
+    inspected_list = []
+    for monkey in monkeys:
+        inspected_list.append(monkey.get_inspected_items())
 
-# print(data)
-# new = 0
-# old = 1
-# new = eval("old + 1")
-# print(new, old)
+    for i in range(len(monkeys)):
+        print("Monkey", i, "inspected items", inspected_list[i], "times.")
+
+    inspected_list = sorted(inspected_list, reverse=True)
+    print("Monkey business:", inspected_list[0] * inspected_list[1])
+
+
+print("Part 1:")
+solution(20, monkeys)
+# TODO: Change managing swaps states - stuck at about 540 of 10000
+# divide_by = 1
+# print("Part 2:")
+# solution(10000, monkeys_p2)
